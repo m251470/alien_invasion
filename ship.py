@@ -2,7 +2,7 @@ import pygame
 
 class Ship:
     """Ship Class"""
-    def __int__(self, ai_game):
+    def __init__(self, ai_game):
         """Get ship and starting position"""
         self.screen = ai_game.screen
         self.screen_rect = ai_game.screen.get_rect()
