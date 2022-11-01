@@ -3,6 +3,7 @@ import sys
 import pygame
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 
 
 class AlienInvasion:
@@ -28,6 +29,7 @@ class AlienInvasion:
         while True:
             self._check_events()
             self.ship.update()
+            self._update_bullets()
             self._update_screen()
 
 
@@ -42,30 +44,38 @@ class AlienInvasion:
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
     def _check_keydown_events(self, event):
-        # Move ship to the right
-        if event.key == pygame.K_RIGHT:
-            self.ship.moving_right = True
-        # Move ship to the left
-        elif event.key == pygame.K_LEFT:
-            self.ship.moving_left = True
         # Move ship to the up
-        elif event.key == pygame.K_UP:
+        if event.key == pygame.K_UP:
             self.ship.moving_up = True
         # Move ship to the down
         elif event.key == pygame.K_DOWN:
             self.ship.moving_down = True
         elif event.key == pygame.K_q:
             sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
 
     def _check_keyup_events(self, event):
-        if event.key == pygame.K_RIGHT:
-            self.ship.moving_right = False
-        elif event.key == pygame.K_LEFT:
-            self.ship.moving_left = False
-        elif event.key == pygame.K_UP:
+
+        if event.key == pygame.K_UP:
             self.ship.moving_up = False
         elif event.key == pygame.K_DOWN:
             self.ship.moving_down = False
+
+    def _fire_bullet(self):
+        """Create a new bullet and add it to the rest"""
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def _update_bullets(self):
+        """Update position of bullets and get rid of old ones"""
+        self.bullets.update()
+        # Rid of old bullets
+        for bullet in self.bullets.copy():
+            if bullet.rect.right <= 0:
+                self.bullets.remove(bullet)
+        print(len(self.bullets))
 
     def _update_screen(self):
             # Redraw the screen during each pass thorugh the loop
