@@ -15,7 +15,7 @@ class Ship:
         self.rect = self.image.get_rect()
 
         #Ship's position at center of screen
-        self.rect.midleft = self.screen_rect.midleft
+        self.rect.center = self.screen_rect.center
 
         #Store a decimal value for the ship's horizontal position
         self.x = float(self.rect.x)
@@ -31,6 +31,10 @@ class Ship:
         #Update rect object from self.x
         self.rect.x = self.x
         self.rect.y = self.y
+        if self.moving_right and self.rect.right < self.screen_rect.right:
+            self.x += self.settings.ship_speed
+        if self.moving_left and self.rect.left > 0:
+            self.x -= self.settings.ship_speed
         if self.moving_up and self.rect.top > 0:
             self.y -= self.settings.ship_speed
         if self.moving_down and self.rect.bottom < self.screen_rect.bottom:

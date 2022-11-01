@@ -44,6 +44,7 @@ class AlienInvasion:
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
     def _check_keydown_events(self, event):
+
         # Move ship to the up
         if event.key == pygame.K_UP:
             self.ship.moving_up = True
@@ -73,7 +74,7 @@ class AlienInvasion:
         self.bullets.update()
         # Rid of old bullets
         for bullet in self.bullets.copy():
-            if bullet.rect.right <= 0:
+            if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
         print(len(self.bullets))
 
