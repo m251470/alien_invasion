@@ -3,7 +3,7 @@ class Settings:
     def __init__(self):
         """Game Setting"""
         #Screen
-        self.bg_color = (37, 150, 190)
+        self.bg_color = (0, 0, 255)
         #Ship setting
         self.ship_speed = 1.5
         #Bullet Settings
