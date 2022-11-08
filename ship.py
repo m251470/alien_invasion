@@ -15,7 +15,7 @@ class Ship:
         self.rect = self.image.get_rect()
 
         #Ship's position at center of screen
-        self.rect.midbottom = self.screen_rect.midbottom
+        self.rect.midleft = self.screen_rect.midleft
 
         #Store a decimal value for the ship's horizontal position
         self.x = float(self.rect.x)
