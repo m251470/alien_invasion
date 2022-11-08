@@ -34,6 +34,7 @@ class AlienInvasion:
             self.ship.update()
             self._update_bullets()
             self._update_screen()
+            self._update_aliens()
 
 
 
@@ -91,6 +92,18 @@ class AlienInvasion:
 
             for alien_number in range(number_aliens_x):
                 self._create_alien(alien_number, row_number)
+    def _check_fleet_edges(self):
+        """Respond fleet to reaching edges"""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+    def _change_fleet_direction(self):
+        """Drop the entire fleet and change fleets direction"""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
     def _create_alien(self, alien_number, row_number):
         alien = Alien(self)
         alien_width, alien_height = alien.rect.size
@@ -98,7 +111,10 @@ class AlienInvasion:
         alien.rect.x = alien.x
         alien.rect.y = alien_height + 2 * alien.rect.height * row_number
         self.aliens.add(alien)
-
+    def _update_aliens(self):
+        """Update positions of all aliens in fleet"""
+        self._check_fleet_edges()
+        self.aliens.update()
     def _update_screen(self):
             # Redraw the screen during each pass thorugh the loop
         self.screen.fill(self.settings.bg_color)

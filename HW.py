@@ -1,7 +1,7 @@
 ### This is DJ's pygame
 import sys
 import pygame
-from settings import Settings
+from settings1 import Settings
 from ship import Ship
 from bullet import Bullet
 from star import Star
@@ -35,6 +35,7 @@ class AlienInvasion:
             self.ship.update()
             self._update_bullets()
             self._update_screen()
+            self._update_star()
 
 
 
@@ -88,24 +89,38 @@ class AlienInvasion:
         star = Star(self)
         star_width, star_height = star.rect.size
         available_space_x = self.settings.screen_width - (2* star_width)
-        number_stars_x = available_space_x // (2* star_width)
+        self.number_stars_x = available_space_x // (2* star_width)
 
         #Determine the number of rows of stars that fit on screen
         ship_height = self.ship.rect.height
-        available_space_y = (self.settings.screen_height - (3* star_height)-ship_height)
+        available_space_y = self.settings.screen_height
         number_rows = available_space_y // (2* star_height)
 
         #Create the full fleet
         for row_number in range(number_rows):
-            for star_number in range(number_stars_x):
-                self._create_star(star_number, row_number)
+            self._create_row(row_number)
+    def _create_row(self, row_number):
+        for star_number in range(self.number_stars_x):
+            self._create_star(star_number, row_number)
     def _create_star(self, star_number, row_number):
         star = Star(self)
         star_width, star_height = star.rect.size
-        star.x = star_width + 2 * star_width * star_number
-        star.rect.x = star.x
-        star.rect.y = star_height + 2 * star.rect.height * row_number
+        star.rect.x = star_width + 2 * star_width * star_number
+        star.y = 2* star.rect.height * row_number
+        star.rect.y = star.y
         self.stars.add(star)
+
+
+    def _update_star(self):
+        """Update positions of all aliens in fleet"""
+        self.stars.update()
+        make_new_star = False
+        for star in self.stars.copy():
+            if star.check_gone():
+                self.stars.remove(star)
+                make_new_star = True
+        if make_new_star:
+            self._create_row(0)
 
 
     def _update_screen(self):
