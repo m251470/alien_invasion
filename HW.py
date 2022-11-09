@@ -48,7 +48,6 @@ class AlienInvasion:
             elif event.type == pygame.KEYUP:
                 self._check_keyup_events(event)
     def _check_keydown_events(self, event):
-
         # Move ship to the up
         if event.key == pygame.K_UP:
             self.ship.moving_up = True
@@ -61,7 +60,6 @@ class AlienInvasion:
             self._fire_bullet()
 
     def _check_keyup_events(self, event):
-
         if event.key == pygame.K_UP:
             self.ship.moving_up = False
         elif event.key == pygame.K_DOWN:
@@ -95,38 +93,40 @@ class AlienInvasion:
         star = Star(self)
         star_width, star_height = star.rect.size
         available_space_y = self.settings.screen_height - (2* star_height)
-        self.number_stars_y = available_space_y // (2* star_width)
+        number_stars_y = available_space_y // (2* star_height)
 
         #Determine the number of rows of stars that fit on screen
-        ship_height = self.ship.rect.height
-        available_space_y = self.settings.screen_height
-        number_rows = available_space_y // (2* star_width)
+        ship_width = self.ship.rect.width
+        available_space_x = (self.settings.screen_width - (3*star_width) - ship_width)
+        number_col = available_space_x // (2* star_width)
 
         #Create the full fleet
-        for row_number in range(number_rows):
-            self._create_row(row_number)
-    def _create_row(self, row_number):
-        for star_number in range(self.number_stars_y):
-            self._create_star(star_number, row_number)
-    def _create_star(self, star_number, row_number):
+        for col_number in range(number_col):
+            for star_number in range(number_stars_y):
+                self._create_star(star_number, col_number)
+    def _create_star(self, star_number, col_number):
         star = Star(self)
         star_width, star_height = star.rect.size
-        star.rect.x = star_width + 2 * star_width * star_number
-        star.y = 2* star.rect.height * row_number
+        star.y = star_height + 2 * star_height * star_number
         star.rect.y = star.y
+        star.x = star_width + 2 * star.rect.width * col_number
         self.stars.add(star)
-
+    def _check_fleet_edges(self):
+        """Respond fleet to reaching edges"""
+        for star in self.stars.sprites():
+            if star.check_edges():
+                self._change_fleet_direction()
+                break
+    def _change_fleet_direction(self):
+        """Drop the entire fleet and change fleets direction"""
+        for star in self.stars.sprites():
+            star.rect.x += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
 
     def _update_star(self):
         """Update positions of all aliens in fleet"""
+        self._check_fleet_edges()
         self.stars.update()
-        make_new_star = False
-        for star in self.stars.copy():
-            if star.check_gone():
-                self.stars.remove(star)
-                make_new_star = True
-        if make_new_star:
-            self._create_row(0)
 
 
     def _update_screen(self):

@@ -15,7 +15,7 @@ class Star(Sprite):
         self.rect = self.image.get_rect()
 
         #Start each new alien near the top left corner
-        self.rect.left = self.screen.get_rect().right
+        self.rect.right = self.screen.get_rect().left
         self.rect.y = self.rect.height
         alien_top_max = self.settings.screen_height - self.rect.height
         self.rect.top = randint(0, alien_top_max)
@@ -27,8 +27,12 @@ class Star(Sprite):
             return True
         else:
             return False
+    def check_edges(self):
+        screen_rect = self.screen.get_rect()
+        if self.rect.top >= screen_rect.bottom or self.rect.bottom <= 0:
+            return True
     def update(self):
         """Move alien"""
-        self.x -= (self.settings.star_speed)
-        self.rect.x = self.x
+        self.y -= self.settings.star_speed * self.settings.fleet_direction
+        self.rect.y = self.y
 
