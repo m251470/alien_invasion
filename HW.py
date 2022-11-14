@@ -6,6 +6,8 @@ from ship import Ship
 from bullet1 import Bullet
 from star import Star
 from random import randint
+from time import sleep
+from game_stats import GameStats
 class AlienInvasion:
     """Manage game assets and behavior"""
 
@@ -26,15 +28,18 @@ class AlienInvasion:
         # set background color
         self.bg_color = (0, 0, 255)
 
+        self.stats = GameStats(self)
+
 
     def run_game(self):
         """Start the main loop for the game"""
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_screen()
-            self._update_star()
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_screen()
+                self._update_star()
 
 
 
@@ -122,12 +127,33 @@ class AlienInvasion:
         for star in self.stars.sprites():
             star.rect.x += self.settings.fleet_drop_speed
         self.settings.fleet_direction *= -1
+    def _ship_hit(self):
+        if self.stats.ship_left > 0:
+            self.stats.ship_left -= 1
+
+            self.stars.empty()
+            self.bullets.empty()
+
+            self._create_fleet()
+            self.ship.center_ship()
+
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
+    def _check_aliens_bottom(self):
+        screen_rect = self.screen.get_rect()
+        for star in self.stars.sprites():
+            if star.rect.left >= screen_rect.left:
+                self._ship_hit()
+                break
 
     def _update_star(self):
         """Update positions of all aliens in fleet"""
         self._check_fleet_edges()
         self.stars.update()
-
+        if pygame.sprite.spritecollideany(self.ship, self.stars):
+            self._ship_hit()
+        self._check_aliens_bottom()
 
     def _update_screen(self):
             # Redraw the screen during each pass thorugh the loop

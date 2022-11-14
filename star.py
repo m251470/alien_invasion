@@ -15,15 +15,15 @@ class Star(Sprite):
         self.rect = self.image.get_rect()
 
         #Start each new alien near the top left corner
-        self.rect.right = self.screen.get_rect().left
+        self.rect.right = self.screen.get_rect().right
         self.rect.y = self.rect.height
         alien_top_max = self.settings.screen_height - self.rect.height
-        self.rect.top = randint(0, alien_top_max)
+        self.rect.top = self.rect.top
 
         #Store the alien's exact horizontal position
         self.x = float(self.rect.x)
     def check_gone(self):
-        if self.rect.right > self.screen.get_rect().left:
+        if self.rect.left > self.screen.get_rect().right:
             return True
         else:
             return False
